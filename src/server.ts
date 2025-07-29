@@ -3,7 +3,7 @@ import {Server} from 'http'
 import { connectDB } from './app/config/db';
 import app from './app';
 
-const PORT = 5000
+const PORT = 8080
 let server : Server;
 
 async function main(){
