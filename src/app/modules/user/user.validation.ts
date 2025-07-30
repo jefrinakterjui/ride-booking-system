@@ -23,6 +23,11 @@ export  const createUserZodSchema = z.object({
         .regex(/^(?=.*\d)/, {
             message: "Password must contain at least 1 number.",
         }),
+    role: z
+        .enum(["RIDER", "DRIVER"], {
+        required_error: "Role is required",
+        invalid_type_error: "Role must be either RIDER or DRIVER"
+        }),
 })
 
 export  const updateUserZodSchema = z.object({
