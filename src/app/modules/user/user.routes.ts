@@ -11,6 +11,7 @@ router.post('/register',
     validateRequest(createUserZodSchema), 
     UserControllers.createUser)
 
+
 router.get('/', checkAuth(Role.ADMIN), UserControllers.getAllUsers)
 
 export const UserRoutes = router
