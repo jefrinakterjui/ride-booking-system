@@ -13,8 +13,26 @@ const createUser = catchAsync(async (req: Request, res: Response)=>{
         message: "User Created Successfully",
         data: user
     })
+});
+
+const getAllUsers = (async(req: Request, res: Response)=>{
+        const result = await UserService.getAllUsers()
+
+        if(!result || !result.data || result.data.length === 0){
+            return res.status(StatusCodes.NOT_FOUND).json({
+                message: "No Users found!"
+            })
+        } 
+        sendResponse(res, {
+            success: true,
+            statusCode: StatusCodes.OK,
+            message: "Users retrieved successfully",
+            data: result.data,
+            meta: result.meta
+        })
 })
 
 export const UserControllers={
-    createUser
+    createUser,
+    getAllUsers
 }
