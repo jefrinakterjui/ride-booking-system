@@ -2,6 +2,7 @@ import express, { Application, Request, Response } from "express";
 import cors from "cors";
 import { router } from "./app/routes";
 import { globalErrorHandeller } from "./app/middleware/globalErrorHandellar";
+import NotFound from "./app/middleware/notFound";
 
 
 const app : Application = express()
@@ -13,6 +14,7 @@ app.get('/', (req: Request, res: Response, )=>{
     res.send("Wellcome to Ride Booking System")
 })
 
-app.use(globalErrorHandeller)
+app.use(globalErrorHandeller);
+app.use(NotFound)
 
 export default app;
