@@ -13,6 +13,7 @@ router.post('/register',
 
 
 router.get('/', checkAuth(Role.ADMIN), UserControllers.getAllUsers)
+router.get('/:id', checkAuth(Role.RIDER, Role.ADMIN), UserControllers.getSingleUser)
 
 export const UserRoutes = router
 

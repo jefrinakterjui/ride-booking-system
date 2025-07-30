@@ -7,8 +7,7 @@ const userSchema = new Schema<IUser>({
     password:{type:String, required: true},
     role:{
         type: String,
-        enum: Object.values(Role),
-        default: Role.RIDER
+        enum: Object.values(Role)
     },
     isDelete:{type: Boolean, default: false},
     isActive:{

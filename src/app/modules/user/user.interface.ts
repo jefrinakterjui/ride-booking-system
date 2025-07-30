@@ -20,7 +20,7 @@ export interface IUser {
     name: string;
     email: string;
     password: string;
-    role?: Role;
+    role: Role;
     isActive?: IsActive;
     isDelete?: boolean;
     auths?: IAuthProvider[];
