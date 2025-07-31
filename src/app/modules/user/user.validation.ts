@@ -1,5 +1,5 @@
 import z from "zod";
-import { Role } from "./user.interface";
+import { ApprovalStatus, IsActive, Role } from "./user.interface";
 
 export  const createUserZodSchema = z.object({
     name: z
@@ -47,3 +47,23 @@ export  const createUserZodSchema = z.object({
     }
 })
 
+export  const updateUserZodSchema = z.object({
+    role: z
+        .enum(Object.values(Role) as [string],{
+            invalid_type_error: 'Role must be a valid string value'
+        })
+        .optional(),
+    isActive: z
+        .enum(Object.values(IsActive) as [string],{
+            invalid_type_error: 'isActive must be a valid status'
+        })
+        .optional(),
+    isDelete: z
+        .boolean({ invalid_type_error: "isDeleted must be true or false" })
+        .optional(),
+    approvalStatus: z
+        .enum(Object.values(ApprovalStatus) as [string],{
+            invalid_type_error: 'Approval status must be a valid value'
+        })
+        .optional()
+})
