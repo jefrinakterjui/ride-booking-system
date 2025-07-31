@@ -16,6 +16,19 @@ const createRide = catchAsync(async (req: Request, res: Response) => {
     })
 });
 
+const getRideHistory = (async(req: Request, res: Response)=>{
+    const riderId = req.user.userId 
+
+    const result = await RideService.getRideHistory(riderId)
+    sendResponse(res, {
+        success: true,
+        statusCode: StatusCodes.OK,
+        message: "Ride history retrieved successfully",
+        data: result
+    })
+})
+
 export const RideControllers = {
-  createRide
+  createRide,
+  getRideHistory
 };
