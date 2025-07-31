@@ -6,5 +6,6 @@ import { RideControllers } from "./ride.controller";
 const router = Router()
 
 router.post("/request", checkAuth(Role.RIDER), RideControllers.createRide)
+router.get("/my-history", checkAuth(Role.RIDER), RideControllers.getRideHistory)
 
 export const RideRoutes = router;

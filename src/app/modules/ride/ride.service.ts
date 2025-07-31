@@ -23,6 +23,13 @@ const createRide = async ( riderId: string, payload: Partial<IRide>) => {
     return newRide;
 };
 
+const getRideHistory = async(riderId: string)=>{
+    const rides = await Ride.find({riderId: riderId})
+
+    return rides
+}
+
 export const RideService = {
-    createRide
+    createRide,
+    getRideHistory
 };
