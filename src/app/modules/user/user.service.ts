@@ -5,6 +5,7 @@ import { IAuthProvider, IUser, Role } from "./user.interface";
 import { User } from "./user.model";
 import bcryptjs from "bcryptjs"
 import AppError from "../../errorHelper/AppError";
+import { JwtPayload } from "jsonwebtoken";
 
 const createUser = async (payload: Partial<IUser>)=>{
     const {  email, password, role, ...restPayload } = payload
@@ -53,8 +54,33 @@ const getSingleUser = async(_id: string)=>{
     }
 }
 
+const updateUser = async(userId: string, payload: Partial<IUser>, decodedToken: JwtPayload)=>{
+    const isUserExist = await User.findById(userId)
+
+    if(!isUserExist){
+        throw new AppError(StatusCodes.NOT_FOUND, "User not found")
+    }
+
+    if(payload.role){
+        if(decodedToken.role !== Role.ADMIN){
+            throw new AppError(StatusCodes.FORBIDDEN, "You are not authorize")
+        }
+    }
+    if(payload.isActive || payload.isDelete || payload.approvalStatus){
+        if(decodedToken.role !== Role.ADMIN){
+            throw new AppError(StatusCodes.FORBIDDEN, "You are not authorize")
+        }
+    }
+    if(payload.password){
+        payload.password = await bcryptjs.hash(payload.password, process.env.BCRYPT_SALT_ROUND as string)
+    };
+    const newUpdateUser = await User.findByIdAndUpdate(userId, payload, {new: true, runValidators: true})
+    return newUpdateUser
+}
+
 export const UserService={
     createUser,
     getAllUsers,
     getSingleUser,
+    updateUser
 }

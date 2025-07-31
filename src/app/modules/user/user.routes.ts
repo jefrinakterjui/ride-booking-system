@@ -14,6 +14,7 @@ router.post('/register',
 
 router.get('/', checkAuth(Role.ADMIN), UserControllers.getAllUsers)
 router.get('/:id', checkAuth(Role.RIDER, Role.ADMIN), UserControllers.getSingleUser)
+router.patch('/:id', checkAuth(Role.ADMIN), UserControllers.updatedUser)
 
 export const UserRoutes = router
 
