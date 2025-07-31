@@ -32,6 +32,7 @@ const rideSchema = new Schema<IRide>(
   },
   {
     timestamps: true, 
+    versionKey: false
   }
 );
 
