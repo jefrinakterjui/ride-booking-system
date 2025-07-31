@@ -1,5 +1,5 @@
 import { model, Schema } from "mongoose"
-import { IsActive, IUser, Role } from "./user.interface"
+import { ApprovalStatus, IsActive, IUser, Role } from "./user.interface"
 
 const userSchema = new Schema<IUser>({
     name:{type: String , required: true},
@@ -14,10 +14,28 @@ const userSchema = new Schema<IUser>({
         type: String,
         enum: Object.values(IsActive),
         default: IsActive.ACTIVE
-    }
+    },
+    vehicleInfo: {
+      vehicleType : { type: String },
+      model: { type: String }
+    },
+    approvalStatus: {
+      type: String,
+      enum: Object.values(ApprovalStatus),
+      default: ApprovalStatus.PENDING
+    },
+
 },{
     timestamps:true,
     versionKey:false
 })
+
+userSchema.pre("save", function (next) {
+  if (this.role !== 'DRIVER') {
+    this.vehicleInfo = undefined;
+    this.approvalStatus = undefined;
+  }
+  next();
+});
 
 export const User = model<IUser>("User", userSchema)

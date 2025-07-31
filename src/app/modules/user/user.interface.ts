@@ -14,6 +14,11 @@ export interface IAuthProvider{
     provider:"credentials";
     providerId: string
 }
+export enum ApprovalStatus {
+  PENDING = "PENDING",
+  APPROVED = "APPROVED",
+  SUSPENDED = "SUSPENDED",
+}
 
 export interface IUser {
     _id?:string;
@@ -24,4 +29,9 @@ export interface IUser {
     isActive?: IsActive;
     isDelete?: boolean;
     auths?: IAuthProvider[];
+    vehicleInfo?: {
+      vehicleType: string
+      model: string;
+    };
+    approvalStatus?: ApprovalStatus;
 }
