@@ -7,5 +7,6 @@ const router = Router()
 
 router.post("/request", checkAuth(Role.RIDER), RideControllers.createRide)
 router.get("/my-history", checkAuth(Role.RIDER), RideControllers.getRideHistory)
+router.patch("/:id/cancel",checkAuth(Role.RIDER), RideControllers.cancelRide)
 
 export const RideRoutes = router;
