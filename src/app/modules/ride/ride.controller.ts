@@ -52,9 +52,30 @@ const getAllRides = async(req: Request, res: Response) =>{
         meta: result.meta
     })
 }
+
+const getAvailableRides = catchAsync(async (req: Request, res: Response) => {
+    const result = await RideService.getAvailableRides()
+
+    if (!result || result.length === 0) {
+        return sendResponse(res, {
+            success: true,
+            statusCode: StatusCodes.OK,
+            message: 'No available rides found at the moment',
+            data: []
+        });
+    }
+    sendResponse(res, {
+        success: true,
+        statusCode: StatusCodes.OK,
+        message: 'Available rides retrieved successfully',
+        data: result
+    })
+});
+
 export const RideControllers = {
   createRide,
   getRideHistory,
   cancelRide,
-  getAllRides
+  getAllRides,
+  getAvailableRides
 };

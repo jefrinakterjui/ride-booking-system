@@ -60,9 +60,17 @@ const getAllRides = async()=>{
         }
     }
 }
+
+const getAvailableRides = async()=>{
+    const availableRides = await Ride.find({status: "requested"})
+
+    return availableRides
+}
+
 export const RideService = {
     createRide,
     getRideHistory,
     cancelRide,
-    getAllRides
+    getAllRides,
+    getAvailableRides
 };
