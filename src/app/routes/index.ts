@@ -15,7 +15,7 @@ export const moduleRoutes = [
         route: AuthRoute
     },
     {
-        path:"/ride",
+        path:"/rides",
         route: RideRoutes
     }
 ];

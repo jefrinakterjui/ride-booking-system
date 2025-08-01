@@ -67,10 +67,30 @@ const getAvailableRides = async()=>{
     return availableRides
 }
 
+const acceptRide = async (rideId: string, driverId: string) => {
+    const ride = await Ride.findById(rideId)
+    if (!ride) {
+        throw new AppError(StatusCodes.NOT_FOUND, 'Ride not found')
+    }
+    if (ride.status !== 'requested') {
+        throw new AppError(StatusCodes.BAD_REQUEST,'This ride is no longer available.')
+    }
+    const updatedRide = await Ride.findByIdAndUpdate(
+        rideId,
+        {
+            status: 'accepted', 
+            driverId: driverId,  
+        },
+        { new: true, runValidators: true }
+    );
+    return updatedRide
+};
+
 export const RideService = {
     createRide,
     getRideHistory,
     cancelRide,
     getAllRides,
-    getAvailableRides
+    getAvailableRides,
+    acceptRide
 };
