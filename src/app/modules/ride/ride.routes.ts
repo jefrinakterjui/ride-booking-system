@@ -11,5 +11,5 @@ router.get("/all-rides", checkAuth(Role.ADMIN), RideControllers.getAllRides)
 router.get("/available", checkAuth(Role.DRIVER), RideControllers.getAvailableRides)
 router.patch("/:id/cancel",checkAuth(Role.RIDER), RideControllers.cancelRide)
 router.patch("/:id/accept", checkAuth(Role.DRIVER), RideControllers.acceptRide)
-
+router.patch("/:id/status", checkAuth(Role.DRIVER), RideControllers.updateRideStatus)
 export const RideRoutes = router;
