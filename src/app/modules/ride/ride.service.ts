@@ -49,8 +49,20 @@ const cancelRide = async (rideId: string, riderId: string) => {
     return updatedRide
 };
 
+const getAllRides = async()=>{
+    const rides = await Ride.find({})
+    const allRides = await Ride.countDocuments()
+
+    return {
+        data: rides,
+        meta:{
+            total: allRides
+        }
+    }
+}
 export const RideService = {
     createRide,
     getRideHistory,
-    cancelRide
+    cancelRide,
+    getAllRides
 };

@@ -42,8 +42,19 @@ const cancelRide = catchAsync(async (req: Request, res: Response) => {
     })
 });
 
+const getAllRides = async(req: Request, res: Response) =>{
+    const result = await RideService.getAllRides()
+    sendResponse(res, {
+        success: true,
+        statusCode: StatusCodes.OK,
+        message: "Rides retrieved successfully",
+        data: result.data,
+        meta: result.meta
+    })
+}
 export const RideControllers = {
   createRide,
   getRideHistory,
-  cancelRide
+  cancelRide,
+  getAllRides
 };
