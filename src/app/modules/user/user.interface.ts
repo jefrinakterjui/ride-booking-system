@@ -19,6 +19,10 @@ export enum ApprovalStatus {
   APPROVED = "APPROVED",
   SUSPENDED = "SUSPENDED",
 }
+export enum AvailabilityStatus {
+  ONLINE = "ONLINE",
+  OFFLINE = "OFFLINE",
+}
 
 export interface IUser {
     _id?:string;
@@ -34,4 +38,5 @@ export interface IUser {
       model: string;
     };
     approvalStatus?: ApprovalStatus;
+    availabilityStatus?: AvailabilityStatus;
 }
