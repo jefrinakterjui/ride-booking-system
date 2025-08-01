@@ -1,6 +1,6 @@
 import { StatusCodes } from "http-status-codes";
 import AppError from "../../errorHelper/AppError";
-import { IRide } from "./ride.interface";
+import { IRide, TRideStatus } from "./ride.interface";
 import { Ride } from "./ride.model";
 
 
@@ -86,11 +86,37 @@ const acceptRide = async (rideId: string, driverId: string) => {
     return updatedRide
 };
 
+const updateRideStatus= async (rideId: string, driverId: string, newStatus: TRideStatus) => {
+    const ride = await Ride.findById(rideId)
+
+    if (!ride) {
+        throw new AppError(StatusCodes.NOT_FOUND, 'Ride not found')
+    }
+    if (ride.driverId?.toString() !== driverId) {
+        throw new AppError(StatusCodes.FORBIDDEN,'You are not authorized to update this ride')
+    }
+    const validTransitions: Partial<Record<TRideStatus, TRideStatus[]>> = {
+        accepted: ['picked_up'],
+        picked_up: ['in_transit'],
+        in_transit: ['completed']
+    }
+    if (!validTransitions[ride.status]?.includes(newStatus)) {
+        throw new AppError(StatusCodes.BAD_REQUEST,`Cannot change status from ${ride.status} to ${newStatus}`)
+    }
+    const updatedRideStatus = await Ride.findByIdAndUpdate(
+        rideId,
+        { status: newStatus },
+        { new: true }
+    )
+    return updatedRideStatus
+};
+
 export const RideService = {
     createRide,
     getRideHistory,
     cancelRide,
     getAllRides,
     getAvailableRides,
-    acceptRide
+    acceptRide,
+    updateRideStatus
 };
