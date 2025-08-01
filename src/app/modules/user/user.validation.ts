@@ -1,5 +1,5 @@
 import z from "zod";
-import { ApprovalStatus, IsActive, Role } from "./user.interface";
+import { ApprovalStatus, AvailabilityStatus, IsActive, Role } from "./user.interface";
 
 export  const createUserZodSchema = z.object({
     name: z
@@ -34,6 +34,11 @@ export  const createUserZodSchema = z.object({
             model: z.string({ required_error: 'Vehicle model is required' }),
         })
         .optional(),
+    availabilityStatus: z
+        .nativeEnum(AvailabilityStatus, {
+            invalid_type_error: "Availability status must be either 'ONLINE' or 'OFFLINE'",
+        })
+        .optional()
 })
 .superRefine((data, ctx) => {
     if (data.role === Role.DRIVER) {
@@ -65,5 +70,9 @@ export  const updateUserZodSchema = z.object({
         .enum(Object.values(ApprovalStatus) as [string],{
             invalid_type_error: 'Approval status must be a valid value'
         })
-        .optional()
+        .optional(),
+    availabilityStatus: z
+        .enum(Object.values(AvailabilityStatus) as [string],{
+            invalid_type_error:'Availability Status be a valid value'
+        })
 })
