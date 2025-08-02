@@ -38,7 +38,8 @@ Key features include JWT-based authentication, role-based authorization for all 
     ```env
     NODE_ENV=development
     PORT=8080
-    MONGODB_URI=mongodb+srv://ride-booking-system:D7fO6DngnKOpzX3m@cluster0.yrzsv.mongodb.net/ride-booking-system?retryWrites=true&w=majority&appName=Cluster0
+    MONGODB_URI=mongodb://localhost:27017/ride-booking-system
+
     
     # JWT Settings
     JWT_ACCESS_SECRET=tour_management_backend
