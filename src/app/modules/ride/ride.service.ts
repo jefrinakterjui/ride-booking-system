@@ -2,11 +2,22 @@ import { StatusCodes } from "http-status-codes";
 import AppError from "../../errorHelper/AppError";
 import { IRide, TRideStatus } from "./ride.interface";
 import { Ride } from "./ride.model";
+import { User } from "../user/user.model";
 
 
-const createRide = async ( riderId: string, payload: Partial<IRide>) => {
+const createRide = async (riderId: string, payload: Partial<IRide>) => {
+    const rider = await User.findById(riderId);
+
+    if (!rider) {
+        throw new AppError(StatusCodes.NOT_FOUND, 'Rider not found.');
+    }
+    if (rider.isDelete) {
+        throw new AppError(StatusCodes.FORBIDDEN, 'Your account has been deleted.');
+    }
+    if (rider.isActive !== 'ACTIVE') {
+        throw new AppError(StatusCodes.FORBIDDEN,'Your account is blocked. Please contact support.')
+    }
     const { pickupLocation, destinationLocation } = payload
-
     const existingActiveRide = await Ride.findOne({
         riderId: riderId,
         status: { $in: ['requested', 'accepted', 'in_transit'] }
@@ -68,6 +79,14 @@ const getAvailableRides = async()=>{
 }
 
 const acceptRide = async (rideId: string, driverId: string) => {
+    const driver = await User.findById(driverId)
+
+    if (!driver) {
+        throw new AppError(StatusCodes.NOT_FOUND, 'Driver not found.')
+    }
+    if (driver.approvalStatus !== 'APPROVED') {
+        throw new AppError(StatusCodes.FORBIDDEN,'You are not approved to accept rides.')
+    }
     const ride = await Ride.findById(rideId)
     if (!ride) {
         throw new AppError(StatusCodes.NOT_FOUND, 'Ride not found')
@@ -78,8 +97,8 @@ const acceptRide = async (rideId: string, driverId: string) => {
     const updatedRide = await Ride.findByIdAndUpdate(
         rideId,
         {
-            status: 'accepted', 
-            driverId: driverId,  
+            status: 'accepted',
+            driverId: driverId
         },
         { new: true, runValidators: true }
     );
