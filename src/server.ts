@@ -8,7 +8,7 @@ let server : Server;
 
 async function main(){
     try {
-        connectDB()
+        await connectDB()
         server = app.listen(PORT, ()=>{
             console.log(`App Listening on PORT ${PORT}`)
         })
