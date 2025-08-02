@@ -1,7 +1,6 @@
 /* eslint-disable no-unused-vars */
 export enum IsActive {
   ACTIVE = "ACTIVE",
-  INACTIVE = "INACTIVE",
   BLOCKED = "BLOCKED",
 }
 
