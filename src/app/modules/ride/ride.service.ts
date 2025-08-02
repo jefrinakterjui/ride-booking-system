@@ -2,6 +2,7 @@ import { StatusCodes } from "http-status-codes";
 import AppError from "../../errorHelper/AppError";
 import { IRide, TRideStatus } from "./ride.interface";
 import { Ride } from "./ride.model";
+import { User } from "../user/user.model";
 
 
 const createRide = async ( riderId: string, payload: Partial<IRide>) => {
@@ -20,6 +21,10 @@ const createRide = async ( riderId: string, payload: Partial<IRide>) => {
         destinationLocation
     }
     const newRide = await Ride.create(rideData);
+
+    await User.findByIdAndUpdate(riderId, {
+        $inc: { totalRidesRequested: 1 }
+    })
     return newRide;
 };
 
@@ -108,6 +113,11 @@ const updateRideStatus= async (rideId: string, driverId: string, newStatus: TRid
         { status: newStatus },
         { new: true }
     )
+    if (newStatus === 'completed' && updatedRideStatus) {
+        await User.findByIdAndUpdate(driverId, {
+            $inc: { totalRidesCompleted: 1 }
+        })
+    }
     return updatedRideStatus
 };
 

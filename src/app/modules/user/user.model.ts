@@ -29,6 +29,14 @@ const userSchema = new Schema<IUser>({
       enum: Object.values(AvailabilityStatus),
       default: AvailabilityStatus.OFFLINE
     },
+    totalRidesRequested: {
+      type: Number,
+      default: 0
+    },
+    totalRidesCompleted: {
+      type: Number,
+      default: 0
+    }
 
 },{
     timestamps:true,
@@ -40,6 +48,10 @@ userSchema.pre("save", function (next) {
     this.vehicleInfo = undefined;
     this.approvalStatus = undefined;
     this.availabilityStatus = undefined;
+    this.totalRidesCompleted = undefined;
+  }
+  if (this.role !== 'RIDER') {
+    this.totalRidesRequested = undefined; 
   }
   next();
 });
