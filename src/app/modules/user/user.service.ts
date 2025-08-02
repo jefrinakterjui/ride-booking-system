@@ -6,6 +6,7 @@ import { User } from "./user.model";
 import bcryptjs from "bcryptjs"
 import AppError from "../../errorHelper/AppError";
 import { JwtPayload } from "jsonwebtoken";
+import { Ride } from "../ride/ride.model";
 
 const createUser = async (payload: Partial<IUser>)=>{
     const {  email, password, role, ...restPayload } = payload
@@ -46,13 +47,24 @@ const getAllUsers = async()=>{
     }
 }
 
-const getSingleUser = async(_id: string)=>{
-    const user = await User.findById({_id})
-
-    return {
-        data:user
+const getSingleUser = async (userId: string) => {
+    const userProfile = await User.findById(userId).lean()
+    if (!userProfile) {
+        return null
     }
-}
+    if (userProfile.role === 'RIDER') {
+        const rideCount = await Ride.countDocuments({ riderId: userId })
+        userProfile.totalRidesRequested = rideCount
+    } 
+    else if (userProfile.role === 'DRIVER') {
+        const rideCount = await Ride.countDocuments({
+            driverId: userId,
+            status: 'completed'
+        })
+        userProfile.totalRidesCompleted = rideCount
+    }
+    return userProfile
+};
 
 const updateUser = async(userId: string, payload: Partial<IUser>, decodedToken: JwtPayload)=>{
     const isUserExist = await User.findById(userId)

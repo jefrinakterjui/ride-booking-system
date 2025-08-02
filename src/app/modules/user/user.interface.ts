@@ -38,4 +38,6 @@ export interface IUser {
     };
     approvalStatus?: ApprovalStatus;
     availabilityStatus?: AvailabilityStatus;
+    totalRidesRequested?: number;
+    totalRidesCompleted?: number;
 }
