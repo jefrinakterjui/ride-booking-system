@@ -91,6 +91,9 @@ const acceptRide = async (rideId: string, driverId: string) => {
     if (driver.approvalStatus !== 'APPROVED') {
         throw new AppError(StatusCodes.FORBIDDEN,'You are not approved to accept rides.')
     }
+    if (driver.availabilityStatus !== 'ONLINE') {
+        throw new AppError(StatusCodes.FORBIDDEN, 'You must be online to accept a ride.');
+    }
     const ride = await Ride.findById(rideId)
     if (!ride) {
         throw new AppError(StatusCodes.NOT_FOUND, 'Ride not found')
