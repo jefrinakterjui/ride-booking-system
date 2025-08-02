@@ -23,7 +23,7 @@ Key features include JWT-based authentication, role-based authorization for all 
 ### Installation & Setup
 1.  **Clone the repository:**
     ```bash
-    git clone <your_repository_url>
+    git clone https://github.com/JefrinAkterJui/ride-booking-system.git
     cd ride-booking-system
     ```
 
@@ -44,6 +44,9 @@ Key features include JWT-based authentication, role-based authorization for all 
     JWT_ACCESS_EXPIRES=2d
     JWT_REFRESH_SECRET=JWT_REFRESH_SECRET
     JWT_REFRESH_EXPIRES=30d
+
+    # bcryptjs
+    BCRYPT_SALT_ROUND=10
     ```
 
 4.  **Build the project:**
