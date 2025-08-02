@@ -3,6 +3,7 @@ import AppError from "../../errorHelper/AppError";
 import { IRide, TRideStatus } from "./ride.interface";
 import { Ride } from "./ride.model";
 import { User } from "../user/user.model";
+import { calculateDistance } from "../../helpers/calculateDistance ";
 
 
 const createRide = async (riderId: string, payload: Partial<IRide>) => {
@@ -129,11 +130,21 @@ const updateRideStatus= async (rideId: string, driverId: string, newStatus: TRid
     if (!validTransitions[ride.status]?.includes(newStatus)) {
         throw new AppError(StatusCodes.BAD_REQUEST,`Cannot change status from ${ride.status} to ${newStatus}`)
     }
-    const updatedRideStatus = await Ride.findByIdAndUpdate(
-        rideId,
-        { status: newStatus },
-        { new: true }
-    )
+    const updatePayload: { status: TRideStatus; fare?: number } = {
+        status: newStatus,
+    };
+    if (newStatus === 'completed') {
+        const distanceInKm = calculateDistance(
+            ride.pickupLocation,
+            ride.destinationLocation
+        );
+        const baseFare = 50;
+        const ratePerKm = 25;   
+        updatePayload.fare = Math.round(baseFare + distanceInKm * ratePerKm);
+    }
+    const updatedRideStatus = await Ride.findByIdAndUpdate(rideId, updatePayload, {
+        new: true, runValidators: true
+    })
     if (newStatus === 'completed' && updatedRideStatus) {
         await User.findByIdAndUpdate(driverId, {
             $inc: { totalRidesCompleted: 1 }

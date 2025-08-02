@@ -1,3 +1,4 @@
+import mongoose from "mongoose";
 import { Ride } from "../ride/ride.model";
 import { AvailabilityStatus } from "../user/user.interface";
 import { User } from "../user/user.model";
@@ -14,10 +15,11 @@ const updatedDriverAvailability = async (driverId: string, status: AvailabilityS
 
 
 const getDriverEarnings= async (driverId: string) => {
+    const driverObjectId = new mongoose.Types.ObjectId(driverId);
     const earnings = await Ride.aggregate([
         {
             $match: {
-                driverId: driverId,
+                driverId: driverObjectId,
                 status: 'completed',
             }
         },
