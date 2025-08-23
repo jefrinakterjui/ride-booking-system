@@ -107,10 +107,31 @@ const updateMyProfile = async (userId: string, payload: Partial<IUser>) => {
 
 };
 
+const changePassword = async ( userId: string, payload: { oldPassword: string; newPassword: string }) => {
+    const user = await User.findById(userId).select('+password');
+
+    if (!user) {
+        throw new AppError(StatusCodes.NOT_FOUND, 'User not found');
+    }
+    const isPasswordMatch = await bcryptjs.compare(
+        payload.oldPassword,
+        user.password,
+    );
+
+    if (!isPasswordMatch) {
+        throw new AppError(StatusCodes.FORBIDDEN, 'Incorrect old password');
+    }
+    user.password = await bcryptjs.hash(payload.newPassword, 10);
+    await user.save();
+
+    return user;
+};
+
 export const UserService={
     createUser,
     getAllUsers,
     getSingleUser,
     updateUser,
-    updateMyProfile
+    updateMyProfile,
+    changePassword
 }

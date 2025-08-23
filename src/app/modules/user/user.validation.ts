@@ -86,3 +86,14 @@ export const updateUserProfileValidationSchema = z.object({
         })
         .optional(),
 });
+
+export const changePasswordValidationSchema = z.object({
+    oldPassword: z.string({
+      required_error: 'Old password is required',
+    }),
+    newPassword: z
+      .string({
+        required_error: 'New password is required',
+      })
+      .min(8, { message: 'Password must be at least 8 characters long' }),
+});

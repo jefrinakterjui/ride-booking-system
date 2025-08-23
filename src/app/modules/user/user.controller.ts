@@ -88,11 +88,32 @@ const updateMyProfile = catchAsync(async (req: Request, res: Response) => {
     });
 });
 
+const changePassword = catchAsync(async (req: Request, res: Response) => {
+    const userId = (req.user as JwtPayload).userId; 
+    const { oldPassword, newPassword } = req.body;
+
+    await UserService.changePassword(userId, {
+        oldPassword,
+        newPassword
+    });
+
+    sendResponse(res, {
+        success: true,
+        statusCode: StatusCodes.OK,
+        message: 'Password changed successfully',
+        data: {
+        message: 'Your password has been updated.'
+        }
+    });
+});
+
+
 
 export const UserControllers={
     createUser,
     getAllUsers,
     getSingleUser,
     updatedUser,
-    updateMyProfile
+    updateMyProfile,
+    changePassword
 }
