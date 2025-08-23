@@ -90,9 +90,27 @@ const updateUser = async(userId: string, payload: Partial<IUser>, decodedToken: 
     return newUpdateUser
 }
 
+const updateMyProfile = async (userId: string, payload: Partial<IUser>) => {
+    delete payload.role;
+    delete payload.isActive;
+    delete payload.isDelete;
+    delete payload.approvalStatus;
+    delete payload.availabilityStatus;
+    delete payload.password; 
+
+    const updateMyProfile = await User.findByIdAndUpdate(userId, payload, {
+        new: true,
+        runValidators: true,
+    }).select('-password');
+ 
+    return updateMyProfile
+
+};
+
 export const UserService={
     createUser,
     getAllUsers,
     getSingleUser,
-    updateUser
+    updateUser,
+    updateMyProfile
 }
