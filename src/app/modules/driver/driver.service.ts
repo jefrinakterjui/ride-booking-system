@@ -40,7 +40,18 @@ const getDriverEarnings= async (driverId: string) => {
     return earnings[0]
 };
 
+const getMyHistory = async (driverId: string) => {
+  const rides = await Ride.find({ driverId: driverId }).populate(
+    'riderId',
+    'name email', 
+  );
+
+  return rides;
+};
+
+
 export const DriverService = {
     updatedDriverAvailability,
-    getDriverEarnings
+    getDriverEarnings,
+    getMyHistory
 };

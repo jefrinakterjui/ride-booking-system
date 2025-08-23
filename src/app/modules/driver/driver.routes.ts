@@ -15,5 +15,10 @@ router.patch(
     validateRequest(DriverValidation.updateAvailabilitySchema), 
     DriverControllers.updatedDriverAvailability
 );
+router.get(
+    '/me/history',
+    checkAuth(Role.DRIVER),
+    DriverControllers.getMyHistory
+);
 
 export const DriverRoutes = router;
