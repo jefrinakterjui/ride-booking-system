@@ -153,6 +153,14 @@ const updateRideStatus= async (rideId: string, driverId: string, newStatus: TRid
     return updatedRideStatus
 };
 
+const getSingleRide = async (rideId: string) => {
+    const ride = await Ride.findById(rideId)
+        .populate('riderId', '-password') 
+        .populate('driverId', '-password');
+
+    return ride;
+};
+
 export const RideService = {
     createRide,
     getRideHistory,
@@ -160,5 +168,6 @@ export const RideService = {
     getAllRides,
     getAvailableRides,
     acceptRide,
-    updateRideStatus
+    updateRideStatus,
+    getSingleRide
 };

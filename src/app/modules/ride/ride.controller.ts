@@ -3,6 +3,7 @@ import { catchAsync } from "../../utils/catchAsync";
 import { RideService } from "./ride.service";
 import { sendResponse } from "../../utils/sendResponse";
 import { StatusCodes } from "http-status-codes";
+import AppError from "../../errorHelper/AppError";
 
 
 const createRide = catchAsync(async (req: Request, res: Response) => {
@@ -105,6 +106,42 @@ const updateRideStatus = catchAsync(async (req: Request, res: Response) => {
     })
 });
 
+const getSingleRide = catchAsync(async (req: Request, res: Response) => {
+    const { id: rideId } = req.params;
+    const requester = req.user;
+
+    const ride = await RideService.getSingleRide(rideId);
+
+    if (!ride) {
+        return sendResponse(res, {
+            success: false,
+            statusCode: StatusCodes.NOT_FOUND,
+            message: 'Ride not found',
+            data: null
+        })
+    }
+    const requesterId = (requester as { userId: string }).userId.toString();
+
+    const isRiderOfThisRide = ride.riderId?._id.toString() === requesterId;
+
+    const isDriverOfThisRide = ride.driverId?._id.toString() === requesterId;
+
+
+    if (requester.role !== 'ADMIN' && !isRiderOfThisRide && !isDriverOfThisRide) {
+        throw new AppError(
+            StatusCodes.FORBIDDEN,
+            'You are not authorized to view this ride'
+        );
+    }
+
+    sendResponse(res, {
+        success: true,
+        statusCode: StatusCodes.OK,
+        message: 'Ride details retrieved successfully',
+        data: ride,
+    });
+});
+
 export const RideControllers = {
   createRide,
   getRideHistory,
@@ -112,5 +149,6 @@ export const RideControllers = {
   getAllRides,
   getAvailableRides,
   acceptRide,
-  updateRideStatus
+  updateRideStatus,
+  getSingleRide
 };
