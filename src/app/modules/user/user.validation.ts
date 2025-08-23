@@ -76,3 +76,13 @@ export  const updateUserZodSchema = z.object({
             invalid_type_error:'Availability Status be a valid value'
         })
 })
+
+export const updateUserProfileValidationSchema = z.object({
+    name: z.string().optional(),
+    vehicleInfo: z
+        .object({
+            vehicleType: z.string({ required_error: 'Vehicle model is required' }),
+            model: z.string({ required_error: 'Vehicle model is required' }),
+        })
+        .optional(),
+});
