@@ -17,17 +17,21 @@ const createRide = catchAsync(async (req: Request, res: Response) => {
     })
 });
 
-const getRideHistory = (async(req: Request, res: Response)=>{
-    const riderId = req.user.userId 
+const getRideHistory = catchAsync(async (req: Request, res: Response) => {
+    const riderId = req.user.userId
+    const query = req.query
 
-    const result = await RideService.getRideHistory(riderId)
+    const result = await RideService.getRideHistory(riderId, query)
+
     sendResponse(res, {
         success: true,
         statusCode: StatusCodes.OK,
-        message: "Ride history retrieved successfully",
-        data: result
+        message: 'Ride history retrieved successfully',
+        data: result.data,
+        meta: result.meta
     })
 });
+
 
 const cancelRide = catchAsync(async (req: Request, res: Response) => {
     const { id: rideId } = req.params
@@ -43,16 +47,17 @@ const cancelRide = catchAsync(async (req: Request, res: Response) => {
     })
 });
 
-const getAllRides = async(req: Request, res: Response) =>{
-    const result = await RideService.getAllRides()
+const getAllRides = catchAsync(async (req: Request, res: Response) => {
+    const result = await RideService.getAllRides(req.query);
+
     sendResponse(res, {
         success: true,
         statusCode: StatusCodes.OK,
-        message: "Rides retrieved successfully",
+        message: 'All rides retrieved successfully',
         data: result.data,
         meta: result.meta
     })
-}
+});
 
 const getAvailableRides = catchAsync(async (req: Request, res: Response) => {
     const result = await RideService.getAvailableRides()

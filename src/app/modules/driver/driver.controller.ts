@@ -32,15 +32,15 @@ const getDriverEarnings = catchAsync(async (req: Request, res: Response) => {
 });
 
 const getMyHistory = catchAsync(async (req: Request, res: Response) => {
-  const driverId = req.user.userId;
-
-  const result = await DriverService.getMyHistory(driverId);
+  const driverId = req.user.userId
+  const result = await DriverService.getMyHistory(driverId, req.query);
 
   sendResponse(res, {
     success: true,
     statusCode: StatusCodes.OK,
-    message: "Driver's ride history retrieved successfully",
-    data: result
+    message: 'Driver ride history retrieved successfully',
+    data: result.data,
+    meta: result.meta
   })
 });
 

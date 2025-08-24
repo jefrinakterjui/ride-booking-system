@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import mongoose from "mongoose";
 import { Ride } from "../ride/ride.model";
 import { AvailabilityStatus } from "../user/user.interface";
@@ -40,13 +41,44 @@ const getDriverEarnings= async (driverId: string) => {
     return earnings[0]
 };
 
-const getMyHistory = async (driverId: string) => {
-  const rides = await Ride.find({ driverId: driverId }).populate(
-    'riderId',
-    'name email', 
-  );
+// const getMyHistory = async (driverId: string) => {
+//   const rides = await Ride.find({ driverId: driverId }).populate(
+//     'riderId',
+//     'name email', 
+//   );
 
-  return rides;
+//   return rides;
+// };
+const getMyHistory = async (driverId: string, query: Record<string, any>) => {
+    const page = Number(query.page) || 1
+    const limit = Number(query.limit) || 10
+    const skip = (page - 1) * limit
+    const filter: any = { driverId: driverId }
+
+    if (query.status) {
+        filter.status = query.status;
+    }
+
+    if (query.startDate && query.endDate) {
+        filter.createdAt = {
+            $gte: new Date(query.startDate as string),
+            $lte: new Date(query.endDate as string),
+        }
+    }
+
+    const [rides, total] = await Promise.all([
+        Ride.find(filter).skip(skip).limit(limit).populate('riderId', 'name email'),
+        Ride.countDocuments(filter)
+    ])
+
+    return {
+        data: rides,
+        meta: {
+            page,
+            limit,
+            total
+        }
+    }
 };
 
 
