@@ -3,7 +3,7 @@ import AppError from "../../errorHelper/AppError";
 import { User } from "../user/user.model";
 import { IUser } from "../user/user.interface";
 import bcryptjs from "bcryptjs"
-import { createUserTokens } from "../../utils/userTokens";
+import { createNewAccessTokenWithRefreshToken, createUserTokens } from "../../utils/userTokens";
 
 /* eslint-disable no-console */
 const creadentialLogin = async (paylode: Partial<IUser>)=>{
@@ -37,7 +37,15 @@ const creadentialLogin = async (paylode: Partial<IUser>)=>{
     }
 }
 
+const getNewAccessToken = async (refreshToken:string)=>{
+    const newAccessToken = await createNewAccessTokenWithRefreshToken(refreshToken)
+
+    return{
+        accessToken: newAccessToken
+    }
+}
 
 export const authService ={
-    creadentialLogin
+    creadentialLogin,
+    getNewAccessToken
 }
