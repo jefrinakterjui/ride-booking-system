@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { StatusCodes } from "http-status-codes";
 import AppError from "../../errorHelper/AppError";
 import { IRide, TRideStatus } from "./ride.interface";
@@ -39,10 +40,36 @@ const createRide = async (riderId: string, payload: Partial<IRide>) => {
     return newRide;
 };
 
-const getRideHistory = async(riderId: string)=>{
-    const rides = await Ride.find({riderId: riderId})
 
-    return rides
+const getRideHistory = async (riderId: string, query: Record<string, any>) => {
+    const page = Number(query.page) || 1
+    const limit = Number(query.limit) || 10
+    const skip = (page - 1) * limit
+    const filter: any = { riderId: riderId }
+
+    if (query.status) {
+        filter.status = query.status
+    }
+    if (query.startDate && query.endDate) {
+        filter.createdAt = {
+            $gte: new Date(query.startDate as string),
+            $lte: new Date(query.endDate as string),
+        }
+    }
+
+    const [rides, total] = await Promise.all([
+        Ride.find(filter).skip(skip).limit(limit),
+        Ride.countDocuments(filter)
+    ])
+
+    return {
+        data: rides,
+        meta: {
+            page,
+            limit,
+            total
+        }
+    }
 };
 
 const cancelRide = async (rideId: string, riderId: string) => {
@@ -65,17 +92,47 @@ const cancelRide = async (rideId: string, riderId: string) => {
     return updatedRide
 };
 
-const getAllRides = async()=>{
-    const rides = await Ride.find({})
-    const allRides = await Ride.countDocuments()
+const getAllRides = async (query: Record<string, any>) => {
+    const page = Number(query.page) || 1
+    const limit = Number(query.limit) || 10
+    const skip = (page - 1) * limit
+
+    const filter: any = {}
+
+    if (query.status) {
+        filter.status = query.status
+    }
+    if (query.riderId) {
+        filter.riderId = query.riderId
+    }
+    if (query.driverId) {
+        filter.driverId = query.driverId
+    }
+    if (query.startDate && query.endDate) {
+        filter.createdAt = {
+            $gte: new Date(query.startDate as string),
+            $lte: new Date(query.endDate as string)
+        }
+    }
+
+    const [rides, total] = await Promise.all([
+        Ride.find(filter)
+        .populate('riderId', 'name email')
+        .populate('driverId', 'name email')
+        .skip(skip)
+        .limit(limit),
+        Ride.countDocuments(filter)
+    ])
 
     return {
         data: rides,
-        meta:{
-            total: allRides
+        meta: {
+            page,
+            limit,
+            total
         }
     }
-}
+};
 
 const getAvailableRides = async()=>{
     const availableRides = await Ride.find({status: "requested"})

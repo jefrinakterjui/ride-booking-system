@@ -17,7 +17,7 @@ const createUser = catchAsync(async (req: Request, res: Response)=>{
 });
 
 const getAllUsers = (async(req: Request, res: Response)=>{
-        const result = await UserService.getAllUsers()
+        const result = await UserService.getAllUsers(req.query)
 
         if(!result || !result.data || result.data.length === 0){
             return res.status(StatusCodes.NOT_FOUND).json({

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable no-unused-vars */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { StatusCodes } from "http-status-codes";
@@ -35,17 +36,50 @@ const createUser = async (payload: Partial<IUser>)=>{
 
 
 
-const getAllUsers = async()=>{
-    const users = await User.find({}, { password: 0 })
-    const allUser = await User.countDocuments()
+// const getAllUsers = async()=>{
+//     const users = await User.find({}, { password: 0 })
+//     const allUser = await User.countDocuments()
+
+//     return {
+//         data: users,
+//         meta:{
+//             total: allUser
+//         }
+//     }
+// }
+
+const getAllUsers = async (query: Record<string, any>) => {
+    const page = Number(query.page) || 1
+    const limit = Number(query.limit) || 10
+    const skip = (page - 1) * limit
+
+    const filter: any = {}
+
+    if (query.searchTerm) {
+        const searchTerm = query.searchTerm as string
+        filter.$or = [
+            { name: { $regex: searchTerm, $options: 'i' } },
+            { email: { $regex: searchTerm, $options: 'i' } }
+        ]
+    }
+    if (query.role) {
+        filter.role = query.role
+    }
+
+    const [users, total] = await Promise.all([
+        User.find(filter).skip(skip).limit(limit).select('-password'),
+        User.countDocuments(filter)
+    ])
 
     return {
         data: users,
-        meta:{
-            total: allUser
+        meta: {
+            page,
+            limit,
+            total
         }
     }
-}
+};
 
 const getSingleUser = async (userId: string) => {
     const userProfile = await User.findById(userId).lean()
